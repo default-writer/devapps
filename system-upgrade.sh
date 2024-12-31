@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 echo WARNING: not tested
-
+exit
 # step 1
 if [[ ! -f ".step1" ]]; then
   sudo apt update
@@ -28,4 +28,4 @@ if [[ ! -f ".step3" ]]; then
   sudo do-release-upgrade -d
   touch .step3
   exit
-fi                                 
+fi
