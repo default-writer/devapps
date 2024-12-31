@@ -1079,7 +1079,7 @@ services:
       - ./gocd/home:/home/go/
       - ./gocd/data:/godata
     networks:
-      - devapps
+      - devapps
 
   agent:
     restart: always
@@ -1094,7 +1094,7 @@ services:
     environment:
       - GO_SERVER_URL=http://gocd:8153/go
     networks:
-      - devapps
+      - devapps
 
   webserver:
     container_name: nginx
@@ -1111,7 +1111,7 @@ services:
       - ./certbot/www/:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/letsencrypt/:ro
     networks:
-      - devapps
+      - devapps
 
   certbot:
     container_name: certbot
@@ -1139,7 +1139,7 @@ services:
       - ./registry:/data
       - ./auth:/auth
     networks:
-      - devapps
+      - devapps
 
   postgres:
     container_name: postgres
@@ -1200,7 +1200,7 @@ services:
 
   portainer:
     image: portainer/portainer-ce:2.25.1-amd64-linux
-    container-name: portainer
+    container_name: portainer
     restart: always
     user: '$UID:$GUID'
     volumes:
