@@ -1064,7 +1064,7 @@ ALTER ROLE "${POSTGRES_USER:-gocd_database_user}" SUPERUSER;
 EOL
 
 # write dockercompose file
-[[ -f "${pwd}/compose/docker-compose.yml" ]] & mv "${pwd}/compose/docker-compose.yml" "${pwd}/compose/docker-compose.yml.bak"
+[[ -f "${pwd}/compose/docker-compose.yml" ]] && mv "${pwd}/compose/docker-compose.yml" "${pwd}/compose/docker-compose.yml.bak"
 [[ ! -f "${pwd}/compose/docker-compose.yml" ]] && cat >"${pwd}/compose/docker-compose.yml"<<EOL
 services:
   gocd:
