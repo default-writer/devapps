@@ -1073,8 +1073,6 @@ services:
     image: gocd/gocd-server:v24.2.0
     depends_on:
       - webserver
-    container_name: gocd
-    user: '$UID:$GID'
     ports:
       - "8153:8153"
     volumes:
@@ -1108,7 +1106,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    restart: always
     volumes:
       - ./nginx/:/etc/nginx/conf.d/
       - ./certbot/www/:/var/www/certbot/:ro
