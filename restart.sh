@@ -14,6 +14,16 @@ if [[ "${BASHOPTS}" != *extdebug* ]]; then
     trap 'err_report $LINENO' ERR
 fi
 
+# initialize variables
+[[ -f "${pwd}/.env" ]] && . "${pwd}/.env"
+POSTGRES_USER=${POSTGRES_USER:-user}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(random 256)}
+POSTGRES_DB=${POSGRES_DB:-gocd}
+PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-$(random 32)}
+DOMAIN_NAME=${DOMAIN_NAME}
+DOMAIN_EMAIL=${DOMAIN_EMAIL}
+
 # main loop
 ./install.sh --stop
 ./install.sh --cleanup

@@ -125,7 +125,7 @@ POSTGRES_DB=${POSGRES_DB:-gocd}
 PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
 PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-$(random 32)}
 DOMAIN_NAME=${DOMAIN_NAME}
-DOMAIN_EMAIL=${DOMAIN_EMAI}
+DOMAIN_EMAIL=${DOMAIN_EMAIL}
 
 # write .env
 [[ ! -f "${pwd}/compose/.env" ]] && cat>"${pwd}/compose/.env"<<EOL
@@ -1009,7 +1009,7 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl;
 
-    server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
+    server_name ${DOMAIN_NAME};
 
     ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
@@ -1017,7 +1017,7 @@ server {
 
     #location /
     #{
-    #    proxy_pass http://pgadmin:80;
+    #    proxy_pass http://pgadmin:8080;
     #}
     #location /
     #{
@@ -1064,10 +1064,12 @@ ALTER ROLE "${POSTGRES_USER:-gocd_database_user}" SUPERUSER;
 EOL
 
 # write dockercompose file
+[[ -f "${pwd}/compose/docker-compose.yml" ]] & mv "${pwd}/compose/docker-compose.yml" "${pwd}/compose/docker-compose.yml.bak"
 [[ ! -f "${pwd}/compose/docker-compose.yml" ]] && cat >"${pwd}/compose/docker-compose.yml"<<EOL
 services:
   gocd:
-    restart: always
+    container_name: gocd
+    restart: unless-stopped
     image: gocd/gocd-server:v24.2.0
     depends_on:
       - webserver
@@ -1082,9 +1084,9 @@ services:
       - devapps
 
   agent:
+    container_name: agent
     restart: always
     image: gocd/gocd-agent-ubuntu-24.04:v24.2.0
-    container_name: agent
     user: '$UID:$GID'
     depends_on:
       - gocd
@@ -1098,6 +1100,7 @@ services:
 
   webserver:
     container_name: nginx
+    restart: unless-stopped
     depends_on:
       - pgadmin
     image: nginx:latest
@@ -1115,6 +1118,7 @@ services:
 
   certbot:
     container_name: certbot
+    restart: unless-stopped
     image: certbot/certbot:latest
     user: '$UID:$GID'
     volumes:
@@ -1125,8 +1129,8 @@ services:
 
   registry:
     container_name: registry
+    restart: unless-stopped
     image: registry:2
-    restart: always
     user: '$UID:$GID'
     ports:
     - "5000:5000"
@@ -1143,6 +1147,7 @@ services:
 
   postgres:
     container_name: postgres
+    restart: unless-stopped
     image: postgres:16.3-alpine3.18
     command:
       - "postgres"
@@ -1166,7 +1171,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -1176,9 +1180,10 @@ services:
       - devapps
 
   pgadmin:
+    container_name: pgadmin
+    restart: unless-stopped
     depends_on:
       - postgres
-    container_name: pgadmin
     image: dpage/pgadmin4:8.8
     environment:
       PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL:-pgadmin_default_email}"
@@ -1187,9 +1192,8 @@ services:
     volumes:
       - ./data/pgadmin:/var/lib/pgadmin
     ports:
-      - "8880:80"
+      - "8080:80"
       - "8443:443"
-    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -1199,16 +1203,16 @@ services:
       - devapps
 
   portainer:
-    image: portainer/portainer-ce:2.25.1-amd64-linux
+    image: portainer/portainer-ce:2.25.1-linux-amd64
     container_name: portainer
-    restart: always
+    restart: unless-stopped
     user: '$UID:$GUID'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data/portainer:/data
 
     ports:
-      - "8880:80"
+      - "9080:80"
       - "9443:9443"
     networks:
       - devapps

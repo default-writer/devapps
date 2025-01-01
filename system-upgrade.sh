@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 echo WARNING: not tested
+echo see also https://www.cyberciti.biz/faq/how-to-upgrade-from-ubuntu-22-04-lts-to-ubuntu-24-04-lts/
 exit
 # step 1
 if [[ ! -f ".step1" ]]; then

@@ -16,9 +16,7 @@ fi
 
 # main loop
 ./install.sh --stop
-./install.sh --cleanup
 ./install.sh --environment
-./install.sh --restore
-./install.sh
+./install.sh --certbot
 ./install.sh --start
 
