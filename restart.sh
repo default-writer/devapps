@@ -14,6 +14,12 @@ if [[ "${BASHOPTS}" != *extdebug* ]]; then
     trap 'err_report $LINENO' ERR
 fi
 
+function random() {
+    local set="abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    local rand=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w "$1" | head -n 1)
+    echo $rand
+}
+
 # initialize variables
 [[ -f "${pwd}/.env" ]] && . "${pwd}/.env"
 POSTGRES_USER=${POSTGRES_USER:-user}
