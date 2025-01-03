@@ -1119,6 +1119,7 @@ services:
       - ./nginx/:/etc/nginx/conf.d/
       - ./certbot/www/:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/letsencrypt/:ro
+      - ./certbot/live/:/etc/letsencrypt/live/:ro
     networks:
       - devapps
 
@@ -1130,8 +1131,10 @@ services:
     volumes:
       - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
+      - ./certbot/live/:/etc/letsencrypt/live/:rw
     networks:
       - devapps
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   registry:
     container_name: registry
