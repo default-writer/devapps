@@ -985,21 +985,35 @@ listen_addresses = '*'			# what IP address(es) to listen on;
 EOL
 
 # write nginx configuration
-[[ ! -f "${pwd}/compose/nginx/default.conf" ]] && cat >"${pwd}/compose/nginx/default.conf"<<EOL
+[[ ! -f "${pwd}/compose/nginx/nginx.conf" ]] && cat >"${pwd}/compose/nginx/nginx.conf"<<EOL
 server {
     listen 80;
-    listen [::]:80;
-
     server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
-    server_tokens off;
+
+    location / {
+        proxy_pass https://portainer:9443;
+    }
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
     }
 
-    location / {
-        return 301 https://${DOMAIN_NAME}$request_uri;
-    }
+    # SSL configuration
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+
+    # Other SSL configurations (e.g. security headers, etc.)
+    # Example:
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers 'HIGH:!aNULL:!MD5';
+    ssl_prefer_server_ciphers on;
+}
+# HTTP to HTTPS redirect
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+    return 301 https://$host$request_uri;
 }
 EOL
 
