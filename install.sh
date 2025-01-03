@@ -90,15 +90,10 @@ fi
 
 if [[ "${backup}" == "--backup" ]]; then
     [[ ! -d "${pwd}/backup" ]] && mkdir "${pwd}/backup"
-    cp -r "${pwd}/compose/certbot/conf" "${pwd}/backup/"
-    cp -r "${pwd}/compose/certbot/www" "${pwd}/backup/"
 fi
 
 if [[ "${restore}" == "--restore" ]]; then
     [[ ! -d "${pwd}/compose" ]] && mkdir "${pwd}/compose"
-    [[ ! -d "${pwd}/compose/certbot" ]] && mkdir "${pwd}/compose/certbot"
-    cp -r "${pwd}/backup/conf/" "${pwd}/compose/certbot/"
-    cp -r "${pwd}/backup/www/" "${pwd}/compose/certbot/"
 fi
 
 # create directory structure
