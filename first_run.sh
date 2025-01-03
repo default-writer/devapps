@@ -2,6 +2,9 @@
 
 set -e
 
+# get path
+pwd="$(pwd)"
+
 # initialize variables
 [[ -f "${pwd}/.env" ]] && . "${pwd}/.env"
 POSTGRES_USER=${POSTGRES_USER:-user}
