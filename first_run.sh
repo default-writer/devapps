@@ -2,6 +2,14 @@
 
 set -e
 
+# define functions
+err_report() {
+    echo "ERROR: $0:$*"
+    exit 8
+}
+
+trap 'err_report $LINENO' ERR
+
 # get path
 pwd="$(pwd)"
 
@@ -15,4 +23,4 @@ PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-$(random 32)}
 DOMAIN_NAME=${DOMAIN_NAME}
 DOMAIN_EMAIL=${DOMAIN_EMAIL}
 
-docker-compose run --rm certonly --webroot --webroot-path=/var/www/certbot -d ${DOMAIN_NAME} -d www.${DOMAIN_NAME}
+docker compose run --rm certonly --webroot --webroot-path=/var/www/certbot -d ${DOMAIN_NAME} -d www.${DOMAIN_NAME}
