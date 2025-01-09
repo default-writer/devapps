@@ -34,6 +34,7 @@ pwd="$(pwd)"
 ## Create directories and files
 ## Usage: ${script} <option>
 ## ${commands}
+command=""
 
 while (($#)); do
     case "$1" in
@@ -49,6 +50,10 @@ while (($#)); do
     esac
     shift
 done
+
+if [[ "${command}"=="" ]]; then
+    help
+fi
 
 [[ $SHLVL -gt 2 ]] || echo OK
 
